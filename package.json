@@ -1,0 +1,47 @@
+{
+  "name": "@gbesse/autonomy-meter",
+  "version": "0.1.0",
+  "description": "Measure selective automation on labeled decisions, with held-out evaluation and uncertainty bounds.",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./src/index.d.mts",
+      "import": "./src/index.mjs"
+    },
+    "./report": {
+      "types": "./src/report.d.mts",
+      "import": "./src/report.mjs"
+    }
+  },
+  "bin": {
+    "autonomy-meter": "./bin/autonomy-meter.mjs"
+  },
+  "files": [
+    "src",
+    "bin",
+    "packs",
+    "examples",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "check": "node scripts/check.mjs",
+    "demo": "node examples/demo.mjs",
+    "typecheck": "tsc --noEmit --strict --target ES2022 --module NodeNext docs/public-api-types.mts"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gbesse/autonomy-meter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gbesse/autonomy-meter/issues"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  }
+}
