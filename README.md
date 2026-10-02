@@ -60,7 +60,7 @@ A pass is historical evidence, not authorization or a guarantee of future accura
 ## Library usage
 
 ```sh
-npm install github:gbesse/autonomy-meter#v0.1.0
+npm install github:gbesse/autonomy-meter#v0.1.1
 ```
 
 ```js
@@ -85,6 +85,10 @@ Collect labels independently and sample automatic decisions too, not only escala
 
 The HTML contains aggregated results only, not original observations. Group labels are
 HTML-escaped. The CLI sends no telemetry and never calls a model.
+
+## Shareable demo report
+
+Run `npm run demo:report` to capture this repository’s bundled example as one JSON object with the project purpose, version and complete demo output. The command fails if the demo fails, so the report is useful when sharing a reproducible first look or reporting unexpected behavior. The bundled demo’s data and safety boundaries still apply.
 
 ## Boundaries
 
