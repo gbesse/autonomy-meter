@@ -66,12 +66,13 @@ export function calibration(rows, bins = 10) {
   };
 }
 
-export function analyze(rows, { maxError = 0.05, minSamples = 30, tuneFraction = 0.6, reviewCost = 1, errorCost = 100 } = {}) {
+export function analyze(rows, { maxError = 0.05, minSamples = 30, tuneFraction = 0.6, reviewCost = 1, errorCost = 100, requiredGroups = [] } = {}) {
   validateRows(rows);
   unit(maxError, 'maxError');
   ensure(Number.isInteger(minSamples) && minSamples > 0, 'minSamples must be a positive integer');
   ensure(Number.isFinite(tuneFraction) && tuneFraction > 0 && tuneFraction < 1, 'tuneFraction must be strictly between 0 and 1');
   ensure(rows.length >= 2, 'Need at least two observations for a holdout');
+  ensure(Array.isArray(requiredGroups) && requiredGroups.length <= 50 && requiredGroups.every(group => typeof group === 'string' && group.length > 0 && group.length <= 200) && new Set(requiredGroups).size === requiredGroups.length, 'Groupes requis : noms uniques non vides (50 max). / Required groups: unique nonempty names (50 max). / Grupos requeridos: nombres únicos no vacíos (máximo 50).');
   const sorted = [...rows].sort((a, b) => Date.parse(a.timestamp) - Date.parse(b.timestamp) || a.id.localeCompare(b.id));
   let boundary = Math.max(1, Math.min(sorted.length - 1, Math.floor(sorted.length * tuneFraction)));
   // Keep observations at the same timestamp together to prevent temporal split leakage.
@@ -81,12 +82,18 @@ export function analyze(rows, { maxError = 0.05, minSamples = 30, tuneFraction =
   const thresholds = [...new Set([0, 1, ...tune.map(row => row.score)])].sort((a, b) => a - b);
   const costOptions = { reviewCost, errorCost };
   const eligible = measurement => measurement.labeledAutomated >= minSamples && measurement.unlabeledAutomated === 0 && measurement.errorUpper95 !== null && measurement.errorUpper95 <= maxError;
+  const groupMeasurement = (sample, group, threshold) => {
+    const subset = sample.filter(row => (row.group ?? 'ungrouped') === group);
+    const measurement = subset.length ? metrics(subset, threshold, costOptions) : { threshold, total: 0, automated: 0, reviewed: 0, coverage: 0, labeledAutomated: 0, unlabeledAutomated: 0, errors: 0, observedErrorRate: null, errorUpper95: null, estimatedCost: null, manualReviewCost: 0 };
+    return { group, ...measurement, eligible: eligible(measurement) };
+  };
+  const groupsEligible = (sample, threshold) => requiredGroups.every(group => groupMeasurement(sample, group, threshold).eligible);
   const tuningCurve = thresholds.map(threshold => metrics(tune, threshold, costOptions));
   // Select on tuning data only. The held-out result may reject this threshold; never retune on it.
-  const candidate = tuningCurve.filter(eligible).sort((a, b) => b.automated - a.automated || b.threshold - a.threshold)[0];
+  const candidate = tuningCurve.filter(measurement => eligible(measurement) && groupsEligible(tune, measurement.threshold)).sort((a, b) => b.automated - a.automated || b.threshold - a.threshold)[0];
   const threshold = candidate?.threshold ?? null;
   const heldout = metrics(holdout, threshold, costOptions);
-  const accepted = threshold !== null && eligible(heldout);
+  const accepted = threshold !== null && eligible(heldout) && groupsEligible(holdout, threshold);
   const groupNames = [...new Set(holdout.map(row => row.group ?? 'ungrouped'))].sort();
   return {
     schemaVersion: 1,
@@ -94,6 +101,7 @@ export function analyze(rows, { maxError = 0.05, minSamples = 30, tuneFraction =
     split: { total: rows.length, tuning: tune.length, holdout: holdout.length, holdoutStartsAt: holdout[0].timestamp },
     recommendation: { status: accepted ? 'holdout_passed' : threshold === null ? 'no_eligible_threshold' : 'holdout_failed', threshold: accepted ? threshold : null, candidateThreshold: threshold },
     tuning: candidate ?? metrics(tune, null, costOptions), holdout: heldout,
+    groupGate: { required: [...requiredGroups], tuning: requiredGroups.map(group => groupMeasurement(tune, group, threshold)), holdout: requiredGroups.map(group => groupMeasurement(holdout, group, threshold)), marginalBoundsNotSimultaneous: true },
     calibration: calibration(holdout),
     groups: groupNames.map(group => ({ group, ...metrics(holdout.filter(row => (row.group ?? 'ungrouped') === group), threshold, costOptions) })),
     curve: thresholds.map(value => metrics(holdout, value, costOptions)),
