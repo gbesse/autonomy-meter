@@ -105,3 +105,16 @@ hosted monitoring is implemented.
 See [methodology](docs/methodology.md), [validation](docs/validation.md), and
 [contributing](CONTRIBUTING.md). Pair with [IntentBus](https://github.com/gbesse/intentbus)
 to observe the outcomes of event-driven automations.
+
+## Groupes exigés / Required groups / Grupos requeridos
+
+**FR.** `requiredGroups: ['French', 'English']` impose les mêmes critères de taille, labels complets et borne Wilson à chaque groupe déclaré, sur le tuning puis le holdout. Un groupe absent ou trop petit échoue ; il ne peut pas emprunter les observations de la majorité. Le seuil est toujours choisi sur le tuning uniquement. Un échec de groupe en holdout rejette ce seuil sans en choisir un autre. Le rapport expose `groupGate` et les noms de groupes sont échappés dans le HTML. Les bornes sont marginales, sans garantie simultanée sur tous les groupes. Sans cette option, le comportement global reste identique. `npm run demo:groups` rejoue un cas synthétique où le global passe et le groupe exigé échoue.
+
+**EN.** `requiredGroups: ['French', 'English']` applies the same sample-size, complete-label and Wilson-bound requirements to every declared group on tuning and then holdout. Absent or small groups fail; they cannot borrow majority observations. Selection still uses tuning only. A failing holdout group rejects that threshold without choosing another. Reports expose `groupGate`; group names are escaped in HTML. Bounds are marginal, with no simultaneous guarantee across groups. Omitting the option preserves global behavior. `npm run demo:groups` replays a synthetic global pass rejected by a required group.
+
+**ES.** `requiredGroups: ['French', 'English']` exige tamaño de muestra, etiquetas completas y límite Wilson en cada grupo declarado, primero en tuning y después en holdout. Un grupo ausente o pequeño falla; no puede tomar observaciones de la mayoría. El umbral se elige solo con tuning. Un grupo fallido en holdout rechaza ese umbral sin elegir otro. El informe expone `groupGate` y escapa los nombres en HTML. Son límites marginales, sin garantía simultánea para todos los grupos. Sin esta opción se conserva el comportamiento global. `npm run demo:groups` reproduce un caso sintético donde el global pasa y el grupo exigido falla.
+
+```sh
+node bin/autonomy-meter.mjs observations.jsonl --require-group French --require-group English --require-pass
+npm run demo:groups
+```

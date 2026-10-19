@@ -1,6 +1,6 @@
 {
   "name": "@gbesse/autonomy-meter",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Measure selective automation on labeled decisions, with held-out evaluation and uncertainty bounds.",
   "type": "module",
   "exports": {
@@ -29,7 +29,8 @@
     "check": "node scripts/check.mjs",
     "demo": "node examples/demo.mjs",
     "typecheck": "tsc --noEmit --strict --target ES2022 --module NodeNext docs/public-api-types.mts",
-    "demo:report": "node examples/demo-report.mjs"
+    "demo:report": "node examples/demo-report.mjs",
+    "demo:groups": "node examples/group-gate.mjs"
   },
   "engines": {
     "node": ">=22"
