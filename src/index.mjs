@@ -2,6 +2,16 @@
 function ensure(condition, message) { if (!condition) throw new Error(message); }
 function unit(value, name) { ensure(Number.isFinite(value) && value >= 0 && value <= 1, `${name} must be between 0 and 1`); }
 
+function calendarTimestamp(value) {
+  if (typeof value !== 'string') return false;
+  const match = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(Z|[+-]\d{2}:\d{2})$/.exec(value);
+  if (!match) return false;
+  const [,y,m,d,h,min,sec,zone] = match, year=Number(y), month=Number(m), day=Number(d);
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const days = [31,leap?29:28,31,30,31,30,31,31,30,31,30,31];
+  return month>=1 && month<=12 && day>=1 && day<=days[month-1] && Number(h)<=23 && Number(min)<=59 && Number(sec)<=59 && (zone==='Z' || (Number(zone.slice(1,3))<=23 && Number(zone.slice(4,6))<=59)) && Number.isFinite(Date.parse(value));
+}
+
 export function validateRows(rows) {
   ensure(Array.isArray(rows) && rows.length > 0, 'Provide at least one observation');
   const ids = new Set();
@@ -9,7 +19,7 @@ export function validateRows(rows) {
     ensure(row && typeof row === 'object', 'Observation must be an object');
     ensure(typeof row.id === 'string' && row.id.length > 0 && !ids.has(row.id), 'Observation ids must be nonempty and unique');
     ids.add(row.id);
-    ensure(typeof row.timestamp === 'string' && /^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:\d{2})$/.test(row.timestamp) && Number.isFinite(Date.parse(row.timestamp)), `Invalid timezone-qualified timestamp: ${row.id}`);
+    ensure(calendarTimestamp(row.timestamp), `Date calendrier ou fuseau invalide / Invalid calendar timestamp or timezone / Fecha de calendario o zona no válida: ${row.id}`);
     unit(row.score, `score for ${row.id}`);
     ensure(typeof row.prediction === 'string' && row.prediction.length > 0, `Missing prediction: ${row.id}`);
     ensure(row.label === undefined || row.label === null || (typeof row.label === 'string' && row.label.length > 0), `Invalid label: ${row.id}`);
