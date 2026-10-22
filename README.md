@@ -118,3 +118,11 @@ to observe the outcomes of event-driven automations.
 node bin/autonomy-meter.mjs observations.jsonl --require-group French --require-group English --require-pass
 npm run demo:groups
 ```
+
+## Dates / Dates / Fechas
+
+FR — Les dates impossibles (30 février, 31 avril, 24 h) sont rejetées avant le découpage chronologique ; les fuseaux et fractions restent acceptés.
+
+EN — Impossible dates (February 30, April 31, hour 24) are rejected before the chronological split; offsets and fractions remain supported.
+
+ES — Fechas imposibles (30 de febrero, 31 de abril, hora 24) se rechazan antes de la división cronológica; se admiten zonas y fracciones.
