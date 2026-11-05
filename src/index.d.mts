@@ -12,3 +12,5 @@ export function calibration(rows: Observation[], bins?: number): Calibration;
 export function wilsonUpper(errors: number, count: number): number | null;
 export function analyze(rows: Observation[], options?: Options): Report;
 export function fromDecisionRecord(record: { id: string; timestamp: string; answers: Record<string, unknown> }, options: { question: string; label?: string; group?: string }): Observation;
+
+export function compareWindows(reference:any[],current:any[],threshold:number|null,options?:any):{threshold:number|null;reference:any;current:any;coverageDelta:number;observedErrorRateDelta:number|null;errorUpper95Delta:number|null;retuned:boolean;driftProven:boolean};
