@@ -137,3 +137,9 @@ export function fromDecisionRecord(record, { question, label, group } = {}) {
   validateRows([row]);
   return row;
 }
+
+export function compareWindows(reference,current,threshold,options={}){
+ const before=metrics(reference,threshold,options),after=metrics(current,threshold,options);
+ const beforeIds=new Set(reference.map(x=>x.id));ensure(!current.some(x=>beforeIds.has(x.id)),'FR: Fenêtres avec identifiants communs. / EN: Overlapping window IDs. / ES: Ventanas con identificadores compartidos.');
+ return {threshold,reference:before,current:after,coverageDelta:after.coverage-before.coverage,observedErrorRateDelta:before.observedErrorRate===null||after.observedErrorRate===null?null:after.observedErrorRate-before.observedErrorRate,errorUpper95Delta:before.errorUpper95===null||after.errorUpper95===null?null:after.errorUpper95-before.errorUpper95,retuned:false,driftProven:false};
+}

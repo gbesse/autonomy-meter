@@ -126,3 +126,12 @@ FR — Les dates impossibles (30 février, 31 avril, 24 h) sont rejetées avant 
 EN — Impossible dates (February 30, April 31, hour 24) are rejected before the chronological split; offsets and fractions remain supported.
 
 ES — Fechas imposibles (30 de febrero, 31 de abril, hora 24) se rechazan antes de la división cronológica; se admiten zonas y fracciones.
+
+
+## 2026-11-05 — FR / EN / ES
+
+FR : `compareWindows(reference,current,threshold,options)` compare couverture et erreurs à seuil gelé, sans réoptimisation sur la période actuelle. Les fenêtres doivent avoir des identifiants disjoints ; jugements absents donnent un delta d’erreur inconnu. Des écarts descriptifs ne prouvent pas une dérive.
+
+EN: `compareWindows(reference,current,threshold,options)` compares coverage and errors at a frozen threshold without retuning on current data. Window IDs must be disjoint; missing labels yield an unknown error delta. Descriptive differences do not prove drift.
+
+ES: `compareWindows(reference,current,threshold,options)` compara cobertura y errores con umbral fijo sin reajustarlo al presente. Identificadores disjuntos; etiquetas ausentes dan delta de error desconocido. Diferencias descriptivas no prueban deriva.
