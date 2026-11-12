@@ -135,3 +135,12 @@ FR : `compareWindows(reference,current,threshold,options)` compare couverture et
 EN: `compareWindows(reference,current,threshold,options)` compares coverage and errors at a frozen threshold without retuning on current data. Window IDs must be disjoint; missing labels yield an unknown error delta. Descriptive differences do not prove drift.
 
 ES: `compareWindows(reference,current,threshold,options)` compara cobertura y errores con umbral fijo sin reajustarlo al presente. Identificadores disjuntos; etiquetas ausentes dan delta de error desconocido. Diferencias descriptivas no prueban deriva.
+
+
+## 2026-11-12 — FR / EN / ES
+
+FR : Exposer couverture erreurs et labels manquants par groupe à seuils fixes.
+
+EN: Expose coverage errors and missing labels by group at fixed thresholds.
+
+ES: Exponer cobertura errores y etiquetas ausentes por grupo con umbrales fijos.
