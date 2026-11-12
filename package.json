@@ -1,6 +1,6 @@
 {
   "name": "@gbesse/autonomy-meter",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Measure selective automation on labeled decisions, with held-out evaluation and uncertainty bounds.",
   "type": "module",
   "exports": {
